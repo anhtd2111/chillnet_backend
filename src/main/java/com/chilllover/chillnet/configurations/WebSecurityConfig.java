@@ -58,7 +58,8 @@ public class WebSecurityConfig {
                 cfg.setAllowedOrigins(Arrays.asList(
                         "http://localhost:5173",
                         "http://localhost:3000",
-                        "http://localhost:4200"
+                        "http://localhost:4200",
+                    "https://chillnet-frontend.onrender.com"
                 ));
                 cfg.setAllowCredentials(true);
                 cfg.setAllowedHeaders(Collections.singletonList("*"));
