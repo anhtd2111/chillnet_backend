@@ -28,48 +28,52 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final JwtTokenValidator jwtTokenValidator;
+
     @Bean
     public SecurityFilterChain
     securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .sessionManagement(
-                        management->management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .addFilterBefore(new org.springframework.web.filter.CorsFilter(corsConfigurationSource()), BasicAuthenticationFilter.class)
                 .addFilterBefore(jwtTokenValidator, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 );
 
+
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    private CorsConfigurationSource corsConfigurationSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration cfg = new CorsConfiguration();
-                cfg.setAllowedOrigins(Arrays.asList(
-                        "http://localhost:5173",
-                        "http://localhost:3000",
-                        "http://localhost:4200",
-                    "https://chillnet-frontend.onrender.com"
-                ));
-                cfg.setAllowCredentials(true);
-                cfg.setAllowedHeaders(Collections.singletonList("*"));
-                cfg.setAllowedMethods(Collections.singletonList("*"));
-                cfg.setMaxAge(3600L);
-                cfg.setExposedHeaders(List.of("Authorization"));
-                return cfg;
-            }
-        };
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration cfg = new CorsConfiguration();
+        cfg.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "http://localhost:4200",
+                "https://chillnet-frontend.onrender.com"
+        ));
+        cfg.setAllowCredentials(true);
+        cfg.setAllowedHeaders(Collections.singletonList("*"));
+        cfg.setAllowedMethods(Collections.singletonList("*"));
+        cfg.setMaxAge(3600L);
+        cfg.setExposedHeaders(List.of("Authorization"));
+
+        org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
+                new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", cfg);
+
+        return source;
     }
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
