@@ -7,6 +7,7 @@ import com.chilllover.chillnet.responses.MessageResponse;
 import com.chilllover.chillnet.responses.PostResponse;
 import com.chilllover.chillnet.services.post.PostService;
 import com.chilllover.chillnet.services.user.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class PostController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@RequestHeader("Authorization") String jwt,
-                                        @RequestBody PostDTO postDTO){
+                                        @Valid @RequestBody PostDTO postDTO){
         try {
             User reqUser = userService.findUserByJwt(jwt);
             Post post = postService.createPost(postDTO,reqUser);

@@ -90,7 +90,7 @@ public class AuthServiceImpl implements AuthService{
         user.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
         userRepository.save(user);
 
-        String resetLink = "https://chillnet-frontend.onrender.com/reset-password?token=" + token;
+        String resetLink = "http://localhost:5173/reset-password?token=" + token;
         emailService.sendEmail(email,resetLink);
     }
 

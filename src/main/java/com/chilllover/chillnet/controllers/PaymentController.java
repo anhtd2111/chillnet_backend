@@ -37,8 +37,8 @@ public class PaymentController {
         int amount = planType.equals("Annually") ? 400 : 20;
 
         try {
-            URI cancelUrl = URI.create("https://chillnet-frontend.onrender.com");
-            URI successUrl = URI.create("https://chillnet-frontend.onrender.com/home?planType=" + planType);
+            URI cancelUrl = URI.create("http://localhost:5173");
+            URI successUrl = URI.create("http://localhost:5173/home?planType=" + planType);
 
             Payment payment = paypalService.createPayment(
                     (double) amount,
